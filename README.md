@@ -6,7 +6,7 @@ Self-hosted home server infrastructure running on a refurbished HP ProDesk SFF P
 
 | Component | Specification / Tool | Purpose |
 | :--- | :--- | :--- |
-| **Host Hardware** | HP ProDesk Mini (Intel Core i5-9500, 16GB DDR4) | Compute node |
+| **Host Hardware** | HP ProDesk SFF (Intel Core i5-9500, 16GB DDR4) | Compute node |
 | **Operating System** | Ubuntu Linux | Base container host |
 | **Container Engine** | Docker & Docker Compose (Managed via Portainer) | Microservice orchestration |
 | **Networking** | Tailscale | Secure remote access and mesh VPN |
