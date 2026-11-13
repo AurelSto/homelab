@@ -1,0 +1,12 @@
+.env
+*.env
+!.env.example
+*secret*
+*token*
+*credential*
+data/
+volumes/
+*.db
+*.sqlite
+logs/
+.DS_Store

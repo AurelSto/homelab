@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  web:
+    image: nginx:alpine
+    container_name: static_website
+    restart: unless-stopped
+    volumes:
+      - /home/frodo/services/website/html:/usr/share/nginx/html:ro
+    networks:
+      - web_net
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflare_tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
+    networks:
+      - web_net
+
+networks:
+  web_net:
+    driver: bridge
