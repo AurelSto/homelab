@@ -2,6 +2,8 @@
 
 Self-hosted home server infrastructure running on a refurbished HP ProDesk SFF PC (Intel Core i5-9500, 16GB RAM) running Ubuntu Linux, Docker, and containerized microservices.
 
+For a complete visual system topology and data flow map, see the [Architecture Overview](ARCHITECTURE.md).
+
 ## Hardware & Architecture
 
 | Component | Specification / Tool | Purpose |
