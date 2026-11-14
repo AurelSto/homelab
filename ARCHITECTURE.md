@@ -1,27 +1,29 @@
-# Architecture Overview
-
-## System Topology & Data Flow
-
-```mermaid
 graph TD
-    Internet((Internet)) -->|Cloudflare Tunnel| WT[website-tunnel / Nginx]
-    TailscaleUser((Tailscale / LAN)) -->|Secure Access| Host[lord-of-the-pings Ubuntu Host]
+    subgraph Internet
+        User[External User / Browser]
+        CF_Edge[Cloudflare Edge]
+    end
 
-    subgraph Host [Ubuntu Host: ~/homelab/stacks/]
-        direction TB
-        WT --> LocalWeb[Static Portfolio]
-        
-        subgraph Stacks [Modular Infrastructure Stacks]
-            Immich[immich + postgres]
-            Paperless[paperless-ngx + redis]
-            PDF[stirling-pdf]
+    subgraph Tailscale Network
+        TS_Client[Tailscale Remote Client]
+    end
+
+    User -->|HTTPS / Domain| CF_Edge
+    CF_Edge -->|Cloudflare Tunnel| Tunnel[cloudflare_tunnel container]
+    TS_Client -->|Secure Mesh VPN| Host[Ubuntu Host: lord-of-the-pings]
+
+    subgraph Host ["Ubuntu Host (HP ProDesk SFF - i5-9500)"]
+        subgraph Docker ["Docker Engine & web_net Bridge Network"]
+            Tunnel -->|HTTP / Internal| Caddy[caddy_proxy / Caddy]
+            Caddy -->|TLS Termination & Routing| Nginx[static_website / Nginx]
+            
+            subgraph Services ["Containerized Services"]
+                Nginx
+                Immich[Immich Photo Stack]
+                Paperless[Paperless-ngx Stack]
+                Stirling[Stirling-PDF]
+                AnythingLLM[AnythingLLM Workspace]
+                Portainer[Portainer CE]
+            end
         end
     end
-
-    subgraph Storage [Hardware Layers]
-        NVMe[Host NVMe SSD <br/> OS, Configs, Git Repos]
-        ExtHDD[(500GB External HDD <br/> /run/media/frodo/New Volume1/immich)]
-    end
-
-    Host -.-> NVMe
-    Immich -->|UPLOAD_LOCATION| ExtHDD
