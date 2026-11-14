@@ -1,3 +1,8 @@
+# Architecture Overview
+
+## System Topology & Data Flow
+
+```mermaid
 graph TD
     subgraph Internet
         User[External User / Browser]
