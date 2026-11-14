@@ -1,4 +1,4 @@
-# lord-of-the-pings
+# homelab
 
 Self-hosted home server infrastructure running on a refurbished HP ProDesk SFF PC (Intel Core i5-9500, 16GB RAM) running Ubuntu Linux, Docker, and containerized microservices.
 
