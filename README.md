@@ -12,7 +12,9 @@ For a complete visual system topology and data flow map, see the [Architecture O
 | **Operating System** | Ubuntu Linux | Base container host |
 | **Container Engine** | Docker & Docker Compose (Managed via Portainer) | Microservice orchestration |
 | **Networking** | Tailscale | Secure remote access and mesh VPN |
-| **Ingress** | Cloudflare Tunnels | Public service exposure without port forwarding |
+| **Reverse Proxy** | Caddy (`caddy_proxy`) | Automated TLS termination and internal routing |
+| **Web Server** | Nginx (`static_website`) | Static portfolio and website hosting |
+| **Ingress** | Cloudflare Tunnels (`cloudflare_tunnel`) | Public service exposure without port forwarding |
 
 ---
 
@@ -22,7 +24,8 @@ For a complete visual system topology and data flow map, see the [Architecture O
 homelab/
 ├── stacks/
 │   ├── anythingllm/       # Local AI knowledge base & RAG workspace
+│   ├── caddy/             # Caddy reverse proxy configuration & data volumes
 │   ├── immich/            # Self-hosted photo and video backup solution
 │   ├── paperless/         # Paperless-ngx document management (PostgreSQL + Redis)
 │   ├── stirling-pdf/      # Local PDF utility toolkit
-│   └── website-tunnel/    # Nginx static portfolio server + Cloudflare Tunnel agent
+│   └── website-tunnel/    # Nginx static server + Cloudflare Tunnel agent stack
