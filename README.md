@@ -29,3 +29,16 @@ homelab/
 │   ├── paperless/         # Paperless-ngx document management (PostgreSQL + Redis)
 │   ├── stirling-pdf/      # Local PDF utility toolkit
 │   └── website-tunnel/    # Nginx static server + Cloudflare Tunnel agent stack
+
+## Services & Ports
+
+| Service | Container Name | Internal Port | Access Method | Purpose |
+| :--- | :--- | :--- | :--- | :--- |
+| **Caddy** | `caddy_proxy` | `80`, `443` | Public / Direct | Reverse proxy & automated TLS termination |
+| **Nginx** | `static_website` | `80` | Routed via Caddy | Static portfolio & website hosting |
+| **Cloudflare Tunnel** | `cloudflare_tunnel` | N/A | Cloudflare Edge | Secure public ingress without open ports |
+| **Portainer** | `portainer` | `9443` | Tailscale / Local | Container management UI |
+| **Immich** | `immich-server` | `2283` | Tailscale / Local | Self-hosted photo and video backup |
+| **Paperless-ngx** | `paperless-webserver` | `8000` | Tailscale / Local | Document management & OCR indexing |
+| **Stirling-PDF** | `stirling-pdf` | `8080` | Tailscale / Local | Local PDF utility toolkit |
+| **AnythingLLM** | `anythingllm` | `3001` | Tailscale / Local | Local AI knowledge base & RAG workspace |
