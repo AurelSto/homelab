@@ -42,3 +42,13 @@ homelab/
 | **Paperless-ngx** | `paperless-webserver` | `8000` | Tailscale / Local | Document management & OCR indexing |
 | **Stirling-PDF** | `stirling-pdf` | `8080` | Tailscale / Local | Local PDF utility toolkit |
 | **AnythingLLM** | `anythingllm` | `3001` | Tailscale / Local | Local AI knowledge base & RAG workspace |
+
+## Rebuild From Scratch
+
+If you need to redeploy the entire homelab environment on a fresh Ubuntu host (e.g.,lord-of-the-pings), follow these steps:
+
+### 1. Prerequisites & Dependencies
+Ensure Docker, Docker Compose, and Git are installed on your Ubuntu host:
+```bash
+sudo apt update && sudo apt install -y git docker.io docker-compose-v2
+sudo usermod -aG docker $USER
