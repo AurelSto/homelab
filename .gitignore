@@ -14,3 +14,4 @@ stacks/immich/postgres/
 stacks/immich/.env
 stacks/stirling-pdf/data/
 stacks/stirling-pdf/logs/
+*.p12
