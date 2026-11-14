@@ -29,7 +29,7 @@ homelab/
 │   ├── paperless/         # Paperless-ngx document management (PostgreSQL + Redis)
 │   ├── stirling-pdf/      # Local PDF utility toolkit
 │   └── website-tunnel/    # Nginx static server + Cloudflare Tunnel agent stack
-
+```
 ## Services & Ports
 
 | Service | Container Name | Internal Port | Access Method | Purpose |
