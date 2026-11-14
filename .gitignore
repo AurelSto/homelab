@@ -10,3 +10,7 @@ volumes/
 *.sqlite
 logs/
 .DS_Store
+stacks/immich/postgres/
+stacks/immich/.env
+stacks/stirling-pdf/data/
+stacks/stirling-pdf/logs/

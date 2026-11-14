@@ -1,0 +1,12 @@
+services:
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    container_name: stirling-pdf
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+      - ./trainingData:/usr/share/tessdata
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+    restart: unless-stopped
