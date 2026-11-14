@@ -19,5 +19,8 @@ Self-hosted home server infrastructure running on a refurbished HP ProDesk SFF P
 ```text
 homelab/
 ├── stacks/
+│   ├── anythingllm/       # Local AI knowledge base & RAG workspace
+│   ├── immich/            # Self-hosted photo and video backup solution
 │   ├── paperless/         # Paperless-ngx document management (PostgreSQL + Redis)
+│   ├── stirling-pdf/      # Local PDF utility toolkit
 │   └── website-tunnel/    # Nginx static portfolio server + Cloudflare Tunnel agent
