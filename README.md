@@ -38,10 +38,14 @@ homelab/
 | **Nginx** | `static_website` | `80` | Routed via Caddy | Static portfolio & website hosting |
 | **Cloudflare Tunnel** | `cloudflare_tunnel` | N/A | Cloudflare Edge | Secure public ingress without open ports |
 | **Portainer** | `portainer` | `9443` | Tailscale / Local | Container management UI |
-| **Immich** | `immich-server` | `2283` | Tailscale / Local | Self-hosted photo and video backup |
-| **Paperless-ngx** | `paperless-webserver` | `8000` | Tailscale / Local | Document management & OCR indexing |
+| **Immich** | `immich-server` | `100.90.170.107:2283` | Tailscale Only | Self-hosted photo and video backup |
+| **Paperless-ngx** | `paperless-webserver` | `100.90.170.107:8010` | Tailscale Only | Document management & OCR indexing |
 | **Stirling-PDF** | `stirling-pdf` | `8080` | Tailscale / Local | Local PDF utility toolkit |
 | **AnythingLLM** | `anythingllm` | `3001` | Tailscale / Local | Local AI knowledge base & RAG workspace |
+
+## Security
+
+This stack enforces strict network isolation via Tailscale VPN and container permission hardening. For details on ingress restrictions and storage integrity policies, please see [SECURITY.md](./SECURITY.md).
 
 ## Rebuild From Scratch
 
