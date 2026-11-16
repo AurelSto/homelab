@@ -1,3 +1,4 @@
+                                                  <img width="64" height="82" alt="image" src="https://github.com/user-attachments/assets/db1cb1aa-b463-47ea-b36f-1f8c09af9542" />
 # homelab
 
 Self-hosted home server infrastructure running on a refurbished HP ProDesk SFF PC (Intel Core i5-9500, 16GB RAM) running Ubuntu Linux, Docker, and containerized microservices.
