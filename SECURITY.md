@@ -1,25 +1,41 @@
 # Security Policy
 
-This document outlines the security architecture and hardening measures implemented for this self-hosted deployment.
+Security architecture, known limitations and reporting process for this self-hosted deployment. Last verified against the running host: 2026-11-18. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full topology and verification commands.
 
-## Network Isolation
+## Scope and threat model
 
-All public and unsecured local network exposure is disabled for core services. 
+A single personal server on a home network. The only intentionally public service is a static portfolio site. Everything else is for private use and should be reachable only from devices on my Tailscale network. Protection against a compromised tailnet device or a compromised host is out of scope.
 
-- **Tailscale VPN Binding:** Services do not listen on public interfaces (`0.0.0.0`) or unauthenticated local network adapters. Ingress is restricted exclusively to the private Tailscale virtual private network interface (`100.90.170.107`).
-- **Configured Endpoints:**
-  * **Immich:** Bound exclusively to `100.90.170.107:2283`
-  * **Paperless-ngx:** Bound exclusively to `100.90.170.107:8010`
+## Network isolation
 
-## Host System Security
+- **No inbound ports.** The router has no port forwards. The public site is reached through an outbound Cloudflare Tunnel (`cloudflared` → Caddy → Nginx) on a private Docker network; Caddy and Nginx publish no host ports.
+- **Tailscale-bound services.** The published ports of Immich (`2283`), Paperless-ngx (`8010`), Stirling-PDF (`8080`), AnythingLLM (`3001`) and Portainer (`9443`) are bound to the host's Tailscale address, not to `0.0.0.0`. They are not reachable from the LAN or the internet.
+- **Host firewall (UFW).** Default deny for incoming traffic; allow on the `tailscale0` interface. Ollama (`11434`) is also allowed from the AnythingLLM Docker subnet only.
+- **Docker bypasses UFW** for published container ports, so those ports are protected by their bind address in the compose files, not by firewall rules.
+- **Native services on all interfaces.** Ollama (`11434`) and the remote desktop service (`3389`) listen on all interfaces and rely on UFW; RDP is allowed only on `tailscale0`.
 
-- **Automated OS Updates:** Host-level security patching is managed via `unattended-upgrades` on Ubuntu (`lord-of-the-pings`), ensuring the base operating system and kernel remain automatically patched against vulnerabilities.
+## Host hardening
 
-## Container Permissions & Storage Security
+- **SSH:** key-only authentication, no root login, `AllowUsers` restricted to one account, `MaxAuthTries 3`. Port 22 has no firewall rule of its own and is reachable only over Tailscale.
+- **Updates:** `unattended-upgrades` installs security updates automatically (Ubuntu security and ESM security pockets only). Other package updates are applied manually. Kernel and some library updates take effect only after a reboot.
+- **Drive mount safety:** the data drive is mounted via `/etc/fstab` with `nofail`, and its mount point is immutable while unmounted (`chattr +i`), so a missing drive makes containers fail instead of silently writing to the system drive.
 
-- **User Mapping:** Containers enforce non-root execution contexts where applicable (utilizing explicit `USERMAP_UID: 1000` and `USERMAP_GID: 1000` configurations).
-- **Storage Integrity:** Persistent storage volumes (such as `/mnt/immich-storage`) enforce strict directory ownership (`100.90.170.107` host-level UID/GID mapping) and utilize system sentinel validation checks (`.immich` files) to verify read/write integrity on startup.
+## Containers and storage
 
-## Reporting a Vulnerability
+- **Unprivileged users where supported.** Paperless-ngx (`USERMAP_UID`/`USERMAP_GID`) and Stirling-PDF (`PUID`/`PGID`) run their application processes as UID/GID 1000. Data directories on the data drive are owned by `1000:1000`.
+- **Immich startup checks.** Immich verifies marker files (`.immich`) in its upload folders on startup and refuses to start if they are missing or unreadable. This catches an unmounted or replaced storage volume; it is not an integrity check of the stored files.
+- **Secrets** are kept in git-ignored `.env` files. Each stack documents its variables in `.env.example`.
 
-Since this is a self-hosted personal infrastructure stack, please report any security concerns or misconfigurations directly via private communication rather than public issue trackers.
+## Known limitations
+
+- **Portainer** has access to the Docker socket, which is equivalent to root on the host. It is reachable only over Tailscale.
+- **AnythingLLM** runs with the `SYS_ADMIN` capability.
+- **Stirling-PDF** has its built-in login disabled (`DOCKER_ENABLE_SECURITY=false`); the tailnet is its only access control.
+- **Image tags.** Several images use `latest` (Caddy, cloudflared, Stirling-PDF, AnythingLLM, Portainer), so upgrades are not reproducible and can change behavior.
+- **Tunnel token** is stored in a Portainer-managed compose file on the host rather than in a separate secret.
+- **No Cloudflare Access** policy is configured; the only public service is the static site.
+- **No backups yet.** Data lives on single disks; see the roadmap in [README.md](README.md).
+
+## Reporting a vulnerability
+
+This is a personal infrastructure repository. If you find a security issue or misconfiguration, please use GitHub's private vulnerability reporting (Security tab → Report a vulnerability) instead of a public issue.
