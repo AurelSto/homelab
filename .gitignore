@@ -16,3 +16,9 @@ stacks/stirling-pdf/data/
 stacks/stirling-pdf/logs/
 *.p12
 *.p12
+
+# Stirling-PDF runtime state, configs, and SQL dumps
+stacks/stirling-pdf/configs/
+stacks/stirling-pdf/customFiles/
+stacks/stirling-pdf/tessdata/
+*.sql
