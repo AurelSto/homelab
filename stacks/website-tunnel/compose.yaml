@@ -1,8 +1,7 @@
-version: '3.8'
 
 services:
   web:
-    image: nginx:alpine
+    image: nginx@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11
     container_name: static_website
     restart: unless-stopped
     volumes:
@@ -11,7 +10,7 @@ services:
       - web_net
 
   cloudflared:
-    image: cloudflare/cloudflared:latest
+    image: cloudflare/cloudflared@sha256:4955524aeaa379e154023d5a027c250f7b35041a2e7e950cf13f144bc9b9c5ba
     container_name: cloudflare_tunnel
     restart: unless-stopped
     command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}

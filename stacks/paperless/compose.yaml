@@ -1,4 +1,3 @@
-version: "3.4"
 
 services:
   broker:
@@ -20,7 +19,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    image: ghcr.io/paperless-ngx/paperless-ngx@sha256:d704e84f88300eb6ab001ab15720a2330ff99169cf9f94d6b8fcc44b63a84c84
     container_name: paperless-webserver
     restart: unless-stopped
     depends_on:

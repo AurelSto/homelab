@@ -1,12 +1,14 @@
 services:
   stirling-pdf:
-    image: frooodle/s-pdf:latest
+    image: frooodle/s-pdf@sha256:ed7b1775c6706b5e5ea24fa6155f078eff1027bd35a17d21834e4407036025e6
     container_name: stirling-pdf
     ports:
-      - "8080:8080"
+      - "100.90.170.107:8080:8080"
     volumes:
-      - ./data:/data
-      - ./trainingData:/usr/share/tessdata
+      - /home/frodo/services/stirling-pdf/configs:/configs
+      - /home/frodo/services/stirling-pdf/customFiles:/customFiles
+      - /home/frodo/services/stirling-pdf/logs:/logs
+      - /home/frodo/services/stirling-pdf/tessdata:/usr/share/tessdata
     environment:
       - DOCKER_ENABLE_SECURITY=false
     restart: unless-stopped

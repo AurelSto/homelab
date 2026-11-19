@@ -10,7 +10,7 @@ services:
     env_file:
       - .env
     ports:
-      - '2283:2283'
+      - '100.90.170.107:2283:2283'
     depends_on:
       - redis
       - database
@@ -27,7 +27,7 @@ services:
 
   redis:
     container_name: immich_redis
-    image: docker.io/valkey/valkey:9
+    image: docker.io/valkey/valkey@sha256:3add1a336a920ea54770a001ab6feb3da5fceea96a40373a3a2cd469b815f0b7
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
