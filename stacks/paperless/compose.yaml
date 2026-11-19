@@ -17,7 +17,7 @@ services:
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
-      POSTGRES_PASSWORD: paperless_db_password_change_me
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   webserver:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
@@ -27,23 +27,23 @@ services:
       - db
       - broker
     ports:
-      - "8010:8000"
+      - "100.90.170.107:8010:8000"
     volumes:
-      - "/run/media/frodo/New Volume/paperless/data:/usr/src/paperless/data"
-      - "/run/media/frodo/New Volume/paperless/media:/usr/src/paperless/media"
-      - "/run/media/frodo/New Volume/paperless/consume:/usr/src/paperless/consume"
-      - "/run/media/frodo/New Volume/paperless/export:/usr/src/paperless/export"
+      - "/home/frodo/hdd/paperless/data:/usr/src/paperless/data"
+      - "/home/frodo/hdd/paperless/media:/usr/src/paperless/media"
+      - "/home/frodo/hdd/paperless/consume:/usr/src/paperless/consume"
+      - "/home/frodo/hdd/paperless/export:/usr/src/paperless/export"
     environment:
       PAPERLESS_REDIS: redis://broker:6379
       PAPERLESS_DBHOST: db
       PAPERLESS_DBUSER: paperless
-      PAPERLESS_DBPASS: paperless_db_password_change_me
+      PAPERLESS_DBPASS: ${PAPERLESS_DBPASS}
       PAPERLESS_TIME_ZONE: Europe/Bucharest
       PAPERLESS_OCR_LANGUAGE: eng
-      PAPERLESS_SECRET_KEY: replace_this_with_a_long_random_secret_key_123456
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY}
       PAPERLESS_URL: http://192.168.0.100:8010
       PAPERLESS_ADMIN_USER: admin
-      PAPERLESS_ADMIN_PASSWORD: set_your_admin_password_here
+      PAPERLESS_ADMIN_PASSWORD: ${PAPERLESS_ADMIN_PASSWORD}
       USERMAP_UID: 1000
       USERMAP_GID: 1000
 
