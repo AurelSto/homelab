@@ -1,7 +1,8 @@
-
+# Reference copy of the stack deployed through Portainer (project "2").
+# Do not run it alongside the live stack: the container names would collide.
 services:
   web:
-    image: nginx@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11
+    image: nginx:alpine@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11
     container_name: static_website
     restart: unless-stopped
     volumes:
@@ -9,13 +10,28 @@ services:
     networks:
       - web_net
 
+  caddy:
+    image: caddy:2.11.9@sha256:4e2425f6009577e7c651010f16679c28f7d12df3e7b1914f941a7a3370746b3c
+    container_name: caddy_proxy
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web_net
+
   cloudflared:
-    image: cloudflare/cloudflared@sha256:4955524aeaa379e154023d5a027c250f7b35041a2e7e950cf13f144bc9b9c5ba
+    image: cloudflare/cloudflared:2026.10.7@sha256:4955524aeaa379e154023d5a027c250f7b35041a2e7e950cf13f144bc9b9c5ba
     container_name: cloudflare_tunnel
     restart: unless-stopped
     command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
     networks:
       - web_net
+
+volumes:
+  caddy_data:
+  caddy_config:
 
 networks:
   web_net:
