@@ -86,8 +86,8 @@ sudo usermod -aG docker $USER
 
 ## Known gaps / roadmap
 
-- [ ] **Backups.** Everything lives on single disks. Plan: nightly restic/Kopia to a second drive plus an offsite copy, with a tested restore.
-- [ ] **Image pinning.** Several images still use `latest` (Caddy, cloudflared, Stirling-PDF, AnythingLLM, Portainer).
-- [ ] **Tunnel token** is stored in a Portainer-managed compose file; move it to an environment variable.
-- [ ] **Monitoring.** Add Uptime Kuma and a lightweight resource monitor.
+- [ ] **Backups.** Everything lives on single disks, and Immich's database and the Docker volumes are on the system drive. Plan: nightly restic/Kopia to a second drive plus an offsite copy, including database dumps, with a tested restore.
+- [ ] **Image pinning.** Pinned by digest in this repo: Paperless-ngx, Stirling-PDF, Uptime Kuma, Valkey, nginx, cloudflared and Caddy. Still floating: AnythingLLM, Portainer and the live `website-tunnel` stack in Portainer. Next: add Renovate for update PRs.
+- [x] **Tunnel token** moved out of git and rotated (kept in the Portainer-managed stack's environment files on the host).
+- [x] **Monitoring.** Uptime Kuma with push alerts is running. Still to do: monitors for Ollama and SSH, an external check that does not depend on the server, and resource monitoring.
 - [ ] **Encrypted data drive** (LUKS) with a boot-time unlock strategy.

@@ -1,6 +1,6 @@
 # Security Policy
 
-Security architecture, known limitations and reporting process for this self-hosted deployment. Last verified against the running host: 2026-11-18. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full topology and verification commands.
+Security architecture, known limitations and reporting process for this self-hosted deployment. Last verified against the running host: 2026-11-20. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full topology and verification commands.
 
 ## Scope and threat model
 
@@ -9,7 +9,7 @@ A single personal server on a home network. The only intentionally public servic
 ## Network isolation
 
 - **No inbound ports.** The router has no port forwards. The public site is reached through an outbound Cloudflare Tunnel (`cloudflared` → Caddy → Nginx) on a private Docker network; Caddy and Nginx publish no host ports.
-- **Tailscale-bound services.** The published ports of Immich (`2283`), Paperless-ngx (`8010`), Stirling-PDF (`8080`), AnythingLLM (`3001`) and Portainer (`9443`) are bound to the host's Tailscale address, not to `0.0.0.0`. They are not reachable from the LAN or the internet.
+- **Tailscale-bound services.** The published ports of Immich (`2283`), Paperless-ngx (`8010`), Stirling-PDF (`8080`), AnythingLLM (`3001`), Uptime Kuma (`3002`) and Portainer (`9443`) are bound to the host's Tailscale address, not to `0.0.0.0`. They are not reachable from the LAN or the internet.
 - **Host firewall (UFW).** Default deny for incoming traffic; allow on the `tailscale0` interface. Ollama (`11434`) is also allowed from the AnythingLLM Docker subnet only.
 - **Docker bypasses UFW** for published container ports, so those ports are protected by their bind address in the compose files, not by firewall rules.
 - **Native services on all interfaces.** Ollama (`11434`) and the remote desktop service (`3389`) listen on all interfaces and rely on UFW; RDP is allowed only on `tailscale0`.
@@ -22,19 +22,23 @@ A single personal server on a home network. The only intentionally public servic
 
 ## Containers and storage
 
-- **Unprivileged users where supported.** Paperless-ngx (`USERMAP_UID`/`USERMAP_GID`) and Stirling-PDF (`PUID`/`PGID`) run their application processes as UID/GID 1000. Data directories on the data drive are owned by `1000:1000`.
+- **Unprivileged users where configured.** Paperless-ngx runs its application processes as UID/GID 1000 (`USERMAP_UID`/`USERMAP_GID`). Stirling-PDF's image uses UID/GID 1000 by default. Data directories on the data drive are owned by `1000:1000`.
 - **Immich startup checks.** Immich verifies marker files (`.immich`) in its upload folders on startup and refuses to start if they are missing or unreadable. This catches an unmounted or replaced storage volume; it is not an integrity check of the stored files.
-- **Secrets** are kept in git-ignored `.env` files. Each stack documents its variables in `.env.example`.
+- **Secrets** are kept in git-ignored `.env` files; each stack documents its variables in `.env.example`. The Cloudflare tunnel token for the Portainer-managed `website-tunnel` stack lives in the environment files next to that stack's compose file on the host.
 
 ## Known limitations
 
 - **Portainer** has access to the Docker socket, which is equivalent to root on the host. It is reachable only over Tailscale.
 - **AnythingLLM** runs with the `SYS_ADMIN` capability.
 - **Stirling-PDF** has its built-in login disabled (`DOCKER_ENABLE_SECURITY=false`); the tailnet is its only access control.
-- **Image tags.** Several images use `latest` (Caddy, cloudflared, Stirling-PDF, AnythingLLM, Portainer), so upgrades are not reproducible and can change behavior.
-- **Tunnel token** is stored in a Portainer-managed compose file on the host rather than in a separate secret.
+- **Image tags.** Pinned by digest in this repository: Paperless-ngx, Stirling-PDF, Uptime Kuma, Valkey, and the `website-tunnel` images (nginx, cloudflared, Caddy). Still floating: AnythingLLM (`latest`) and Portainer (`latest`); Immich follows its own release tag. The live `website-tunnel` stack in Portainer currently runs floating tags (`nginx:alpine`, `caddy:latest`, `cloudflared:latest`).
 - **No Cloudflare Access** policy is configured; the only public service is the static site.
-- **No backups yet.** Data lives on single disks; see the roadmap in [README.md](README.md).
+- **Alerts** are delivered through the public `ntfy.sh` service. The topic name is the only secret, so alerts contain service names only.
+- **No backups yet.** Data lives on single disks, and Immich's database and the Docker volumes sit on the system drive; see the roadmap in [README.md](README.md).
+
+## Incident history
+
+- **2026-11:** A Cloudflare tunnel token was committed to this repository by mistake (in an example env file) and stayed public for several days. It was rotated in Cloudflare on 2026-11-19, replaced in the running stack, and scrubbed from the Git history. Earlier commits of the Paperless compose file also contained credentials; the database password and secret key were regenerated.
 
 ## Reporting a vulnerability
 

@@ -1,6 +1,6 @@
 # Architecture Overview
 
-Last verified against the running host: 2026-11-18. Placeholders: `<tailscale-ip>` is the host's Tailscale IPv4 address; `<data-uuid>` is the data partition's UUID.
+Last verified against the running host: 2026-11-20. Placeholders: `<tailscale-ip>` is the host's Tailscale IPv4 address; `<data-uuid>` is the data partition's UUID.
 
 ## System Topology & Data Flow
 
@@ -30,6 +30,7 @@ graph TD
             Stirling["Stirling-PDF :8080"]
             AnythingLLM["AnythingLLM Workspace :3001"]
             Portainer["Portainer CE :9443"]
+            Kuma["Uptime Kuma :3002"]
         end
 
         Ollama["Ollama (native systemd) :11434"]
@@ -43,6 +44,7 @@ graph TD
     TS_Client -->|Secure Mesh VPN| Stirling
     TS_Client -->|Secure Mesh VPN| AnythingLLM
     TS_Client -->|Secure Mesh VPN| Portainer
+    TS_Client -->|Secure Mesh VPN| Kuma
 ```
 
 Public traffic never touches a host port. Cloudflare Tunnel connects outbound to Cloudflare, and `cloudflared`, Caddy and Nginx share the `web_net` bridge network. TLS terminates at Cloudflare; Caddy serves plain HTTP on port 80 inside the Docker network (`:80 { reverse_proxy static_website:80 }`). The other services are not on `web_net`; they are reached only over Tailscale.
@@ -67,6 +69,7 @@ UUID=<data-uuid> /home/frodo/hdd ext4 defaults,nofail 0 2
 - `nofail` keeps the host bootable if the drive dies.
 - The mount point is immutable while unmounted (`sudo chattr +i /home/frodo/hdd`, run before the first mount), so Docker cannot silently create directories on the system drive. A missing drive makes containers fail loudly instead.
 - Data lives under `/home/frodo/hdd/immich` and `/home/frodo/hdd/paperless` (owned by UID/GID 1000). Immich needs `.immich` marker files in its folders; it creates them itself on first start of an empty library.
+- Immich's PostgreSQL data lives in `stacks/immich/postgres` on the system drive (NVMe), not on the data drive. Back it up with a database dump, not a file copy of the running database.
 - Always use absolute data paths in compose files. Desktop auto-mount paths under `/run/media/...` are RAM-backed and disappear on reboot.
 
 ## Network and exposure
@@ -78,6 +81,7 @@ UUID=<data-uuid> /home/frodo/hdd ext4 defaults,nofail 0 2
 | Stirling-PDF | `stirling-pdf` | `<tailscale-ip>:8080` | tailnet |
 | AnythingLLM | `anythingllm` | `<tailscale-ip>:3001` | tailnet |
 | Portainer | `portainer` | `<tailscale-ip>:9443` | tailnet |
+| Uptime Kuma | `uptime-kuma` | `<tailscale-ip>:3002` | tailnet |
 | Caddy | `caddy_proxy` | none | `web_net` only |
 | Nginx | `static_website` | none | `web_net` only |
 | cloudflared | `cloudflare_tunnel` | none | outbound only |
@@ -114,7 +118,7 @@ Port 22 has no firewall rule of its own; it is reachable only through the `tails
 
 ## Deployment
 
-Stacks are plain Docker Compose projects, mostly deployed from this repository. The `website-tunnel` stack (cloudflared, Caddy, Nginx) is managed through Portainer, so its live copy can differ from the one committed here; keep them in sync after edits.
+Stacks are plain Docker Compose projects deployed from this repository, with one exception. The `website-tunnel` stack (cloudflared, Caddy, Nginx) runs from a copy of its compose file inside Portainer's data directory (Compose project `2`, shown in Portainer as an externally created stack with limited control). Its tunnel token lives in the environment files next to that copy, not in git. The compose file in this repository is a reference copy with pinned images; the live stack currently uses floating tags (`nginx:alpine`, `caddy:latest`, `cloudflared:latest`), so compare the two after any change and update both.
 
 ## Verification
 
@@ -133,4 +137,4 @@ Expected: no container published on `0.0.0.0`, the data drive mounted from its o
 
 ## Known gaps
 
-See the roadmap in [README.md](README.md): backups, image pinning, tunnel token handling, monitoring, disk encryption.
+See the roadmap in [README.md](README.md): backups, remaining image pinning, external uptime checks, disk encryption.
