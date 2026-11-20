@@ -24,11 +24,10 @@ For a complete visual system topology and data flow map, see the [Architecture O
 ```text
 homelab/
 ├── stacks/
-│   ├── anythingllm/       # Local AI knowledge base & RAG workspace
-│   ├── caddy/             # Caddy reverse proxy configuration (Caddyfile)
 │   ├── immich/            # Self-hosted photo and video backup solution
 │   ├── paperless/         # Paperless-ngx document management (PostgreSQL + Redis)
 │   ├── stirling-pdf/      # Local PDF utility toolkit
+│   ├── uptime-kuma/       # Uptime monitoring with push alerts
 │   └── website-tunnel/    # Nginx static server + Cloudflare Tunnel agent stack
 ```
 
@@ -46,6 +45,7 @@ Published ports are bound to the host's Tailscale address (`<tailscale-ip>`), so
 | **Paperless-ngx** | `paperless-webserver` | `<tailscale-ip>:8010` | Tailscale only | Document management & OCR indexing |
 | **Stirling-PDF** | `stirling-pdf` | `<tailscale-ip>:8080` | Tailscale only | Local PDF utility toolkit |
 | **AnythingLLM** | `anythingllm` | `<tailscale-ip>:3001` | Tailscale only | Local AI knowledge base & RAG workspace |
+| **Uptime Kuma** | `uptime-kuma` | `<tailscale-ip>:3002` | Tailscale only | Service monitoring and push alerts |
 
 ## Security
 
