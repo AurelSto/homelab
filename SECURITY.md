@@ -31,7 +31,7 @@ A single personal server on a home network. The only intentionally public servic
 - **Portainer** has access to the Docker socket, which is equivalent to root on the host. It is reachable only over Tailscale.
 - **AnythingLLM** runs with the `SYS_ADMIN` capability.
 - **Stirling-PDF** has its built-in login disabled (`DOCKER_ENABLE_SECURITY=false`); the tailnet is its only access control.
-- **Image tags.** Pinned by digest in this repository: Paperless-ngx, Stirling-PDF, Uptime Kuma, Valkey, and the `website-tunnel` images (nginx, cloudflared, Caddy). Still floating: AnythingLLM (`latest`) and Portainer (`latest`); Immich follows its own release tag. The live `website-tunnel` stack in Portainer currently runs floating tags (`nginx:alpine`, `caddy:latest`, `cloudflared:latest`).
+- **Image tags.** Pinned by digest: Paperless-ngx, Stirling-PDF, Uptime Kuma, Valkey, and the `website-tunnel` images (nginx, cloudflared, Caddy), including the live Portainer-managed stack. Still floating: AnythingLLM (`latest`) and Portainer (`latest`); Immich follows its own release tag.
 - **No Cloudflare Access** policy is configured; the only public service is the static site.
 - **Alerts** are delivered through the public `ntfy.sh` service. The topic name is the only secret, so alerts contain service names only.
 - **No backups yet.** Data lives on single disks, and Immich's database and the Docker volumes sit on the system drive; see the roadmap in [README.md](README.md).

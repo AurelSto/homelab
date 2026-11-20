@@ -118,7 +118,7 @@ Port 22 has no firewall rule of its own; it is reachable only through the `tails
 
 ## Deployment
 
-Stacks are plain Docker Compose projects deployed from this repository, with one exception. The `website-tunnel` stack (cloudflared, Caddy, Nginx) runs from a copy of its compose file inside Portainer's data directory (Compose project `2`, shown in Portainer as an externally created stack with limited control). Its tunnel token lives in the environment files next to that copy, not in git. The compose file in this repository is a reference copy with pinned images; the live stack currently uses floating tags (`nginx:alpine`, `caddy:latest`, `cloudflared:latest`), so compare the two after any change and update both.
+Stacks are plain Docker Compose projects deployed from this repository, with one exception. The `website-tunnel` stack (cloudflared, Caddy, Nginx) runs from a copy of its compose file inside Portainer's data directory (Compose project `2`, shown in Portainer as an externally created stack with limited control). Its tunnel token lives in the environment files next to that copy, not in git. The compose file in this repository is a reference copy; the live stack runs the same pinned images, so compare the two after any change and update both.
 
 ## Verification
 
