@@ -1,0 +1,15 @@
+name: portainer
+services:
+  portainer:
+    image: portainer/portainer-ce@sha256:3609c307943bca8e5c492f69ddd6965df177208b50678a4cff28391c8dd4e96e
+    container_name: portainer
+    restart: unless-stopped
+    ports:
+      - "100.90.170.107:9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+volumes:
+  portainer_data:
+    external: true
