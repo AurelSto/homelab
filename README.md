@@ -26,10 +26,14 @@ homelab/
 ├── stacks/
 │   ├── immich/            # Self-hosted photo and video backup solution
 │   ├── paperless/         # Paperless-ngx document management (PostgreSQL + Redis)
+│   ├── portainer/         # Portainer CE container management UI
 │   ├── stirling-pdf/      # Local PDF utility toolkit
 │   ├── uptime-kuma/       # Uptime monitoring with push alerts
 │   └── website-tunnel/    # Nginx static server + Cloudflare Tunnel agent stack
+└── systemd/               # Host-level systemd overrides (Docker waits for Tailscale at boot)
 ```
+
+AnythingLLM and its Ollama setup live in a separate repository: [AurelSto/local-ai](https://github.com/AurelSto/local-ai).
 
 ## Services & Ports
 
@@ -81,13 +85,15 @@ sudo usermod -aG docker $USER
    ```
 3. Create the data folders owned by UID 1000: `/home/frodo/hdd/immich` and `/home/frodo/hdd/paperless/{consume,data,export,media}`.
 4. Create the external volume used by AnythingLLM: `docker volume create anythingllm_storage`.
-5. Set the firewall: default deny incoming, allow on `tailscale0`, and allow the AnythingLLM subnet to reach port `11434`.
-6. Harden SSH with key-only login before closing the firewall to the LAN.
+5. Create the external volume used by Portainer: `docker volume create portainer_data`.
+6. Install the Docker boot-order drop-in so containers bound to the Tailscale address don't fail at boot. See [systemd/README.md](systemd/README.md).
+7. Set the firewall: default deny incoming, allow on `tailscale0`, and allow the AnythingLLM subnet to reach port `11434`.
+8. Harden SSH with key-only login before closing the firewall to the LAN.
 
 ## Known gaps / roadmap
 
 - [ ] **Backups.** Everything lives on single disks, and Immich's database and the Docker volumes are on the system drive. Plan: nightly restic/Kopia to a second drive plus an offsite copy, including database dumps, with a tested restore.
-- [ ] **Image pinning.** Pinned by digest in this repo: Paperless-ngx, Stirling-PDF, Uptime Kuma, Valkey, nginx, cloudflared and Caddy. Still floating: AnythingLLM and Portainer. Next: add Renovate for update PRs.
+- [ ] **Image pinning.** Pinned by digest in this repo: Paperless-ngx, Stirling-PDF, Uptime Kuma, Portainer, Valkey, nginx, cloudflared and Caddy. Still floating: AnythingLLM (in the `local-ai` repo). Next: add Renovate for update PRs.
 - [x] **Tunnel token** moved out of git and rotated (kept in the Portainer-managed stack's environment files on the host).
 - [x] **Monitoring.** Uptime Kuma with push alerts is running. Still to do: monitors for Ollama and SSH, an external check that does not depend on the server, and resource monitoring.
 - [ ] **Encrypted data drive** (LUKS) with a boot-time unlock strategy.
