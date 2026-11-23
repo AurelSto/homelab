@@ -93,7 +93,7 @@ sudo usermod -aG docker $USER
 ## Known gaps / roadmap
 
 - [ ] **Backups.** Everything lives on single disks, and Immich's database and the Docker volumes are on the system drive. Plan: nightly restic/Kopia to a second drive plus an offsite copy, including database dumps, with a tested restore.
-- [ ] **Image pinning.** Pinned by digest in this repo: Paperless-ngx, Stirling-PDF, Uptime Kuma, Portainer, Valkey, nginx, cloudflared and Caddy. Still floating: AnythingLLM (in the `local-ai` repo). Next: add Renovate for update PRs.
+- [ ] **Image pinning.** Pinned by digest: Paperless-ngx, Stirling-PDF, Uptime Kuma, Portainer, Valkey, nginx, cloudflared, Caddy, and AnythingLLM (in the `local-ai` repo). Tag only, not yet pinned: Immich (server, machine-learning and Postgres) and Paperless's Postgres and Redis. Next: add Renovate for update PRs.
 - [x] **Tunnel token** moved out of git and rotated (kept in the Portainer-managed stack's environment files on the host).
 - [x] **Monitoring.** Uptime Kuma with push alerts is running. Still to do: monitors for Ollama and SSH, an external check that does not depend on the server, and resource monitoring.
 - [ ] **Encrypted data drive** (LUKS) with a boot-time unlock strategy.
